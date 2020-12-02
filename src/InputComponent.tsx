@@ -11,7 +11,7 @@ const InputComponent = (props: PropsInterface) => {
   const [validation, setValidation] = React.useState<boolean>(false);
   const [errorMessage, setErrorMessage] = React.useState<string>('');
 
-  onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     console.log('test', event);
     props.onChange();
   };
