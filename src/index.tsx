@@ -15,3 +15,12 @@ ReactDOM.render(
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
+
+//TODO app folder structure
+//TODO styles for component
+//TODO separate subcomponents
+//TODO logic moved to separated files
+//TODO unit test written
+//TODO import untyped library for ts
+//TODO set proper CSS BEM class names
+//TODO backward navigation for backspace button

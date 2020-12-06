@@ -3627,6 +3627,11 @@ create-hmac@^1.1.0, create-hmac@^1.1.4, create-hmac@^1.1.7:
     safe-buffer "^5.0.1"
     sha.js "^2.4.8"
 
+creditcard.js@^2.1.6:
+  version "2.1.6"
+  resolved "https://registry.yarnpkg.com/creditcard.js/-/creditcard.js-2.1.6.tgz#6e18121a7f480d20b4412729f8195036218f31ae"
+  integrity sha512-8fVhXYIIF/30tKSsnT6T0xg3e8Mc/Fg6/ZmgaBhAw+AeGCUWlxVYJH4xTbgwNzEqBWsNatX7c47f0DNNGkc5xA==
+
 cross-spawn@7.0.3, cross-spawn@^7.0.0, cross-spawn@^7.0.2:
   version "7.0.3"
   resolved "https://registry.yarnpkg.com/cross-spawn/-/cross-spawn-7.0.3.tgz#f73a85b9d5d41d045551c177e2882d4ac85728a6"
