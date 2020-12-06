@@ -44,18 +44,18 @@ const App: React.FC = () => {
       setValidationMessage('');
     }
     const { maxLength, value, tabIndex } = event.target;
-    const test = value.replace(/\W/gi, '').replace(/(.{4})/g, '$1 ');
     setCardNumber({
       ...cardNumber,
-      value: test,
+      value: value.replace(/\W/gi, '').replace(/(.{4})/g, '$1 '),
     });
     handleAutoTab(value.length === maxLength, tabIndex);
   };
 
   const onChangeExpireDate = (event: React.ChangeEvent<HTMLInputElement>) => {
-    //TODO validate expiry date with card number
     const { maxLength, value, tabIndex } = event.target;
-    setExpireDate(value);
+
+    handleExpireDateValidation(value);
+    setExpireDate(value.replace(/\W/i, '').replace(/(.{2})/, '$1/'));
     handleAutoTab(value.length === maxLength, tabIndex);
   };
 
@@ -94,6 +94,13 @@ const App: React.FC = () => {
     }
   };
 
+  const handleExpireDateValidation = (date: string) => {
+    const month = parseInt(date.slice(0, 2));
+    if (month < 0 || month > 12) {
+      setValidationMessage('Incorrect card date');
+    }
+  };
+
   const handleAutoTab = (shouldAutoTab: boolean, tabIndex: number) => {
     if (shouldAutoTab) {
       const nextSibling = document.getElementsByClassName(`input-field-${tabIndex + 1}`)[0] as HTMLInputElement;
@@ -124,7 +131,7 @@ const App: React.FC = () => {
           className="card-expire-date input-field-2 field"
           tabIndex={2}
           value={expireDate}
-          maxLength={4}
+          maxLength={5}
           placeholder="MM/YY"
         />
         {code.name && (
