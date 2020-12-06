@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import creditCardType from 'credit-card-type';
+import classNames from 'classnames';
 
-import './App.css';
+import styles from './App.module.css';
 
 type CardNumber = {
   value: string;
@@ -35,7 +36,8 @@ const App: React.FC = () => {
   const [code, setCode] = useState<Code>(initialCode);
 
   useEffect(() => {
-    setInputCount(document.getElementsByClassName('field').length as number);
+    //get count of inputs to set proper value to autoTab navigation, it could be basically replaced by static const
+    setInputCount(document.getElementsByClassName('form-field').length as number);
     handleCardType();
   }, [cardNumber.value]);
 
@@ -46,6 +48,7 @@ const App: React.FC = () => {
     const { maxLength, value, tabIndex } = event.target;
     setCardNumber({
       ...cardNumber,
+      //set card number with spaces after every 4 chars
       value: value.replace(/\W/gi, '').replace(/(.{4})/g, '$1 '),
     });
     handleAutoTab(value.length === maxLength, tabIndex);
@@ -55,6 +58,7 @@ const App: React.FC = () => {
     const { maxLength, value, tabIndex } = event.target;
 
     handleExpireDateValidation(value);
+    //set date with "/" separator
     setExpireDate(value.replace(/\W/i, '').replace(/(.{2})/, '$1/'));
     handleAutoTab(value.length === maxLength, tabIndex);
   };
@@ -72,12 +76,12 @@ const App: React.FC = () => {
 
   const handleCardType = () => {
     if (cardNumber.value) {
-      console.log(creditCardType(cardNumber.value));
       try {
         const cardData = creditCardType(cardNumber.value)[0];
 
         setCardNumber({
           ...cardNumber,
+          //length below includes spaces
           minLength: cardData.lengths[0] + cardData.gaps.length,
           maxLength: cardData.lengths[0] + cardData.gaps.length,
         });
@@ -90,6 +94,7 @@ const App: React.FC = () => {
       } catch (e) {
         setValidationMessage('Incorrect card number');
         setCode(initialCode);
+        setCardType('');
       }
     }
   };
@@ -103,7 +108,7 @@ const App: React.FC = () => {
 
   const handleAutoTab = (shouldAutoTab: boolean, tabIndex: number) => {
     if (shouldAutoTab) {
-      const nextSibling = document.getElementsByClassName(`input-field-${tabIndex + 1}`)[0] as HTMLInputElement;
+      const nextSibling = document.getElementsByClassName(`form-input-${tabIndex + 1}`)[0] as HTMLInputElement;
 
       if (nextSibling !== null && tabIndex < inputsCount) {
         nextSibling.focus();
@@ -113,14 +118,16 @@ const App: React.FC = () => {
 
   return (
     <React.Fragment>
-      <div className="example-form">
-        {cardType && <div className={cardType}></div>}
+      <div className={styles.form}>
+        {cardType && (
+          <div className={classNames(styles[`form-card-type__${cardType}`], styles['form-card-type'])}></div>
+        )}
         <input
           minLength={cardNumber.minLength}
           maxLength={cardNumber.maxLength}
           onChange={onChangeCardNumber}
           value={cardNumber.value}
-          className="card-number-section input-field-1 field"
+          className={classNames(styles['form-card-number'], 'form-input-1', 'form-field')}
           tabIndex={1}
           autoComplete="off"
           placeholder="CardNumber"
@@ -128,7 +135,7 @@ const App: React.FC = () => {
         <input
           onChange={onChangeExpireDate}
           type="text"
-          className="card-expire-date input-field-2 field"
+          className={classNames(styles['form-card-expire-date'], 'form-input-2', 'form-field')}
           tabIndex={2}
           value={expireDate}
           maxLength={5}
@@ -138,7 +145,7 @@ const App: React.FC = () => {
           <input
             onChange={onChangeCode}
             type="text"
-            className="card-code input-field-3 field"
+            className={classNames(styles['form-card-code'], 'form-input-3', 'form-field')}
             maxLength={code.size}
             tabIndex={3}
             value={code.value}
@@ -146,7 +153,7 @@ const App: React.FC = () => {
           />
         )}
       </div>
-      {validationMessage && <div className="validation">{validationMessage}</div>}
+      {validationMessage && <div className={styles.validation}>{validationMessage}</div>}
     </React.Fragment>
   );
 };
