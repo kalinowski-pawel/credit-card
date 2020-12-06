@@ -37,7 +37,7 @@ const App: React.FC = () => {
   useEffect(() => {
     setInputCount(document.getElementsByClassName('field').length as number);
     handleCardType();
-  }, [cardNumber]);
+  }, [cardNumber.value]);
 
   const onChangeCardNumber = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (validationMessage) {
@@ -75,6 +75,12 @@ const App: React.FC = () => {
       console.log(creditCardType(cardNumber.value));
       try {
         const cardData = creditCardType(cardNumber.value)[0];
+
+        setCardNumber({
+          ...cardNumber,
+          minLength: cardData.lengths[0] + cardData.gaps.length,
+          maxLength: cardData.lengths[0] + cardData.gaps.length,
+        });
         setCardType(cardData.type);
         setCode({
           name: cardData.code.name,
