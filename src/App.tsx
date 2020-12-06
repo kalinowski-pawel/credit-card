@@ -37,11 +37,9 @@ const App: React.FC = () => {
   useEffect(() => {
     setInputCount(document.getElementsByClassName('field').length as number);
     handleCardType();
-    console.log('use effect');
   }, [cardNumber]);
 
   const onChangeCardNumber = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('onChangeNumber');
     if (validationMessage) {
       setValidationMessage('');
     }
@@ -62,7 +60,6 @@ const App: React.FC = () => {
   };
 
   const onChangeCode = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('onCHangeCode');
     const { maxLength, value, tabIndex } = event.target;
 
     const data = {
