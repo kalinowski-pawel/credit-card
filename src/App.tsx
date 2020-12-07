@@ -125,7 +125,7 @@ const App: React.FC = () => {
         <input
           minLength={cardNumber.minLength}
           maxLength={cardNumber.maxLength}
-          onChange={onChangeCardNumber}
+          onChange={onChangeCardNumber} //TODO change from onChange to keyPress event
           value={cardNumber.value}
           className={classNames(styles['form-card-number'], 'form-input-1', 'form-field')}
           tabIndex={1}
@@ -133,7 +133,7 @@ const App: React.FC = () => {
           placeholder="CardNumber"
         />
         <input
-          onChange={onChangeExpireDate}
+          onChange={onChangeExpireDate} //TODO change from onChange to keyPress event
           type="text"
           className={classNames(styles['form-card-expire-date'], 'form-input-2', 'form-field')}
           tabIndex={2}
