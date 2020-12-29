@@ -69,7 +69,6 @@ export class App extends React.Component<IProps, IState> {
     const { maxLength, value, tabIndex } = event.target;
     try {
       const cardData = creditCardType(value)[0];
-      console.log(cardData);
 
       this.setState({
         cardNumber: {
