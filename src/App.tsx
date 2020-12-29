@@ -15,7 +15,7 @@ type Code = {
   name: string;
   size: number;
 };
-const App: React.FC = () => {
+export const App: React.FC = () => {
   const initialCardNumber = {
     value: '',
     minLength: 12,
@@ -157,5 +157,3 @@ const App: React.FC = () => {
     </React.Fragment>
   );
 };
-
-export default App;

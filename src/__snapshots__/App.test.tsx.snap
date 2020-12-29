@@ -1,0 +1,65 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Automatic tab switching handling 1`] = `
+Array [
+  <div
+    className="form"
+  >
+    
+    <input
+      autoComplete="off"
+      className="form-card-number form-input-1 form-field"
+      maxLength={12}
+      minLength={12}
+      onChange={[Function]}
+      placeholder="CardNumber"
+      tabIndex={1}
+      value=""
+    />
+    <input
+      className="form-card-expire-date form-input-2 form-field"
+      maxLength={5}
+      onChange={[Function]}
+      placeholder="MM/YY"
+      tabIndex={2}
+      type="text"
+      value=""
+    />
+    
+  </div>,
+  "",
+]
+`;
+
+exports[`Automatic tab switching handling Automatic tab switching handling 1`] = `
+Array [
+  <div
+    className="form"
+  >
+    
+    <input
+      autoComplete="off"
+      className="form-card-number form-input-1 form-field"
+      maxLength={12}
+      minLength={12}
+      onChange={[Function]}
+      placeholder="CardNumber"
+      tabIndex={1}
+      value=""
+    />
+    <input
+      className="form-card-expire-date form-input-2 form-field"
+      maxLength={5}
+      onChange={[Function]}
+      placeholder="MM/YY"
+      tabIndex={2}
+      type="text"
+      value=""
+    />
+    
+  </div>,
+  "",
+]
+`;
+
+exports[`Automatic tab switching handling Should render component properly 1`] = `ShallowWrapper {}`;
