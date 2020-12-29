@@ -1,8 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import creditCardType from 'credit-card-type';
 import classNames from 'classnames';
 
 import styles from './App.module.css';
+
+interface IProps {}
+
+interface IState {
+  cardNumber: CardNumber;
+  code: Code;
+  cardType: string;
+  expirationDate: string;
+  validationMessage: string;
+}
 
 type CardNumber = {
   value: string;
@@ -15,145 +25,156 @@ type Code = {
   name: string;
   size: number;
 };
-export const App: React.FC = () => {
-  const initialCardNumber = {
+
+export class App extends React.Component<IProps, IState> {
+  private INPUTS_COUNT = 3 as number;
+  private readonly myRefs;
+  private initialCardNumber = {
     value: '',
     minLength: 12,
     maxLength: 12,
   };
 
-  const initialCode = {
+  private initialCode = {
     value: '',
-    name: '',
-    size: 0,
+    name: 'CVS',
+    size: 3,
   };
 
-  const [cardNumber, setCardNumber] = useState<CardNumber>(initialCardNumber);
-  const [inputsCount, setInputCount] = useState<number>(0);
-  const [cardType, setCardType] = useState<string>('');
-  const [expireDate, setExpireDate] = useState<string>('');
-  const [validationMessage, setValidationMessage] = useState<string>('');
-  const [code, setCode] = useState<Code>(initialCode);
+  constructor(props: IProps) {
+    super(props);
 
-  useEffect(() => {
-    //get count of inputs to set proper value to autoTab navigation, it could be basically replaced by static const
-    setInputCount(document.getElementsByClassName('form-field').length as number);
-    handleCardType();
-  }, [cardNumber.value]);
-
-  const onChangeCardNumber = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (validationMessage) {
-      setValidationMessage('');
-    }
-    const { maxLength, value, tabIndex } = event.target;
-    setCardNumber({
-      ...cardNumber,
-      //set card number with spaces after every 4 chars
-      value: value.replace(/\W/gi, '').replace(/(.{4})/g, '$1 '),
-    });
-    handleAutoTab(value.length === maxLength, tabIndex);
-  };
-
-  const onChangeExpireDate = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { maxLength, value, tabIndex } = event.target;
-
-    handleExpireDateValidation(value);
-    //set date with "/" separator
-    setExpireDate(value.replace(/\W/i, '').replace(/(.{2})/, '$1/'));
-    handleAutoTab(value.length === maxLength, tabIndex);
-  };
-
-  const onChangeCode = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { maxLength, value, tabIndex } = event.target;
-
-    const data = {
-      ...code,
-      value,
+    this.state = {
+      cardNumber: this.initialCardNumber,
+      code: this.initialCode,
+      cardType: '',
+      expirationDate: '',
+      validationMessage: '',
     };
-    setCode(data);
-    handleAutoTab(value.length === maxLength, tabIndex);
-  };
 
-  const handleCardType = () => {
-    if (cardNumber.value) {
-      try {
-        const cardData = creditCardType(cardNumber.value)[0];
+    this.myRefs = {
+      1: React.createRef(),
+      2: React.createRef(),
+      3: React.createRef(),
+    } as any
+  }
 
-        setCardNumber({
-          ...cardNumber,
-          //length below includes spaces
+  onChangeCardNumber = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    if (this.state.validationMessage) {
+      this.setState({
+        validationMessage: '',
+      });
+    }
+
+    const { maxLength, value, tabIndex } = event.target;
+    try {
+      const cardData = creditCardType(value)[0];
+      console.log(cardData);
+
+      this.setState({
+        cardNumber: {
+          ...this.state.cardNumber,
           minLength: cardData.lengths[0] + cardData.gaps.length,
           maxLength: cardData.lengths[0] + cardData.gaps.length,
-        });
-        setCardType(cardData.type);
-        setCode({
+          //set card number with spaces after every 4 chars
+          value: value.replace(/\W/gi, '').replace(/(.{4})/g, '$1 '),
+        },
+        cardType: value.length > 0 ? cardData.type : '',
+        code: {
           name: cardData.code.name,
           size: cardData.code.size,
-          value: code.value,
-        });
-      } catch (e) {
-        setValidationMessage('Incorrect card number');
-        setCode(initialCode);
-        setCardType('');
-      }
+          value: this.state.code.value,
+        },
+      });
+    } catch (e) {
+      this.setState({
+        validationMessage: 'Incorrect card number',
+        code: this.initialCode,
+        cardType: '',
+      });
     }
+    this.handleAutoTab(value.length === maxLength, tabIndex);
   };
 
-  const handleExpireDateValidation = (date: string) => {
+  onChangeExpireDate = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    const { maxLength, value, tabIndex } = event.target;
+
+    this.handleExpireDateValidation(value);
+    //set date with "/" separator
+    this.setState({
+      expirationDate: value.replace(/\W/i, '').replace(/(.{2})/, '$1/'),
+    });
+
+    this.handleAutoTab(value.length === maxLength, tabIndex);
+  };
+
+  onChangeCode = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    const { maxLength, value, tabIndex } = event.target;
+    this.setState({
+      code: {
+        ...this.state.code,
+        value: value,
+      },
+    });
+
+    this.handleAutoTab(value.length === maxLength, tabIndex);
+  };
+
+  handleExpireDateValidation = (date: string): void => {
     const month = parseInt(date.slice(0, 2));
     if (month < 0 || month > 12) {
-      setValidationMessage('Incorrect card date');
+      this.setState({
+        validationMessage: 'Incorrect card date',
+      });
     }
   };
 
-  const handleAutoTab = (shouldAutoTab: boolean, tabIndex: number) => {
-    if (shouldAutoTab) {
-      const nextSibling = document.getElementsByClassName(`form-input-${tabIndex + 1}`)[0] as HTMLInputElement;
-
-      if (nextSibling !== null && tabIndex < inputsCount) {
-        nextSibling.focus();
-      }
+  handleAutoTab = (shouldAutoTab: boolean, tabIndex: number): void => {
+    if (this.myRefs[tabIndex + 1] && shouldAutoTab && tabIndex < this.INPUTS_COUNT) {
+      this.myRefs[tabIndex + 1].current.focus();
     }
   };
 
-  return (
-    <React.Fragment>
-      <div className={styles.form}>
-        {cardType && (
-          <div className={classNames(styles[`form-card-type__${cardType}`], styles['form-card-type'])}></div>
-        )}
-        <input
-          minLength={cardNumber.minLength}
-          maxLength={cardNumber.maxLength}
-          onChange={onChangeCardNumber} //TODO change from onChange to keyPress event
-          value={cardNumber.value}
-          className={classNames(styles['form-card-number'], 'form-input-1', 'form-field')}
-          tabIndex={1}
-          autoComplete="off"
-          placeholder="CardNumber"
-        />
-        <input
-          onChange={onChangeExpireDate} //TODO change from onChange to keyPress event
-          type="text"
-          className={classNames(styles['form-card-expire-date'], 'form-input-2', 'form-field')}
-          tabIndex={2}
-          value={expireDate}
-          maxLength={5}
-          placeholder="MM/YY"
-        />
-        {code.name && (
+  render(): JSX.Element {
+    console.log(this.state.cardType);
+    return (
+      <React.Fragment>
+        <div className={styles.form}>
+          <div className={classNames(styles[`form-card-type__${this.state.cardType}`], styles['form-card-type'])}></div>
           <input
-            onChange={onChangeCode}
+            minLength={this.state.cardNumber.minLength}
+            maxLength={this.state.cardNumber.maxLength}
+            onChange={this.onChangeCardNumber} //TODO change from onChange to keyPress event
+            value={this.state.cardNumber.value}
+            className={classNames(styles['form-card-number'], 'form-input-1', 'form-field')}
+            tabIndex={1}
+            autoComplete="off"
+            placeholder="CardNumber"
+            ref={this.myRefs[1]}
+          />
+          <input
+            onChange={this.onChangeExpireDate} //TODO change from onChange to keyPress event
+            type="text"
+            className={classNames(styles['form-card-expire-date'], 'form-input-2', 'form-field')}
+            tabIndex={2}
+            value={this.state.expirationDate}
+            maxLength={5}
+            placeholder="MM/YY"
+            ref={this.myRefs[2]}
+          />
+          <input
+            onChange={this.onChangeCode}
             type="text"
             className={classNames(styles['form-card-code'], 'form-input-3', 'form-field')}
-            maxLength={code.size}
+            maxLength={this.state.code.size}
             tabIndex={3}
-            value={code.value}
-            placeholder={code.name}
+            value={this.state.code.value}
+            placeholder={this.state.code.name}
+            ref={this.myRefs[3]}
           />
-        )}
-      </div>
-      {validationMessage && <div className={styles.validation}>{validationMessage}</div>}
-    </React.Fragment>
-  );
-};
+        </div>
+        {this.state.validationMessage && <div className={styles.validation}>{this.state.validationMessage}</div>}
+      </React.Fragment>
+    );
+  }
+}
