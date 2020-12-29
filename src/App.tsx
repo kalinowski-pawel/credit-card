@@ -56,7 +56,7 @@ export class App extends React.Component<IProps, IState> {
       1: React.createRef(),
       2: React.createRef(),
       3: React.createRef(),
-    } as any
+    } as any;
   }
 
   onChangeCardNumber = (event: React.ChangeEvent<HTMLInputElement>): void => {
