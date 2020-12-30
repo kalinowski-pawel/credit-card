@@ -139,7 +139,6 @@ export class App extends React.Component<IProps, IState> {
   };
 
   render(): JSX.Element {
-    console.log(this.state.cardType);
     return (
       <React.Fragment>
         <div className={styles.form}>
