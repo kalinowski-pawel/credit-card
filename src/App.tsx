@@ -1,6 +1,8 @@
 import React from 'react';
 import creditCardType from 'credit-card-type';
 import classNames from 'classnames';
+import { formatCardNumber } from './helpers/FormatCardNumber/FormatCardNumber';
+import { dateFormat } from './helpers/DateFormat/DateFormat';
 
 import styles from './App.module.css';
 
@@ -66,25 +68,29 @@ export class App extends React.Component<IProps, IState> {
       });
     }
 
-    const { maxLength, value, tabIndex } = event.target;
+    const { value, tabIndex } = event.target;
     try {
       const cardData = creditCardType(value)[0];
 
-      this.setState({
-        cardNumber: {
-          ...this.state.cardNumber,
-          minLength: cardData.lengths[0] + cardData.gaps.length,
-          maxLength: cardData.lengths[0] + cardData.gaps.length,
-          //set card number with spaces after every 4 chars
-          value: value.replace(/\W/gi, '').replace(/(.{4})/g, '$1 '),
+      this.setState(
+        {
+          cardNumber: {
+            ...this.state.cardNumber,
+            minLength: cardData.lengths[0] + cardData.gaps.length,
+            maxLength: cardData.lengths[0] + cardData.gaps.length,
+            value: formatCardNumber(value, cardData.gaps),
+          },
+          cardType: value.length > 0 ? cardData.type : '',
+          code: {
+            name: cardData.code.name,
+            size: cardData.code.size,
+            value: this.state.code.value,
+          },
         },
-        cardType: value.length > 0 ? cardData.type : '',
-        code: {
-          name: cardData.code.name,
-          size: cardData.code.size,
-          value: this.state.code.value,
+        () => {
+          this.handleAutoTab(value.length === this.state.cardNumber.maxLength, tabIndex);
         },
-      });
+      );
     } catch (e) {
       this.setState({
         validationMessage: 'Incorrect card number',
@@ -92,16 +98,14 @@ export class App extends React.Component<IProps, IState> {
         cardType: '',
       });
     }
-    this.handleAutoTab(value.length === maxLength, tabIndex);
   };
 
   onChangeExpireDate = (event: React.ChangeEvent<HTMLInputElement>): void => {
     const { maxLength, value, tabIndex } = event.target;
 
     this.handleExpireDateValidation(value);
-    //set date with "/" separator
     this.setState({
-      expirationDate: value.replace(/\W/i, '').replace(/(.{2})/, '$1/'),
+      expirationDate: dateFormat(value),
     });
 
     this.handleAutoTab(value.length === maxLength, tabIndex);
