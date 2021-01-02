@@ -1,9 +1,17 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100px;
+    background: #eee;
+    justify-content: start;
+    align-items: center;
+}
+
 .validation {
     display: flex;
     color: #f00;
     justify-content: center;
     width: 500px;
-    background: #eee;
     padding: 5px 10px;
     margin: 0 10px;
 }
@@ -14,7 +22,6 @@
     padding: 10px;
     margin: 10px 10px 0 10px;
     width: 500px;
-    background: #eee;
     justify-content: center;
 }
 
@@ -50,6 +57,3 @@
 .form-card-type__mastercard {
     background-image: url("./images/mastercard.svg");
 }
-
-
-

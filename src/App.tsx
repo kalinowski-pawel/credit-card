@@ -1,32 +1,13 @@
-import React from 'react';
+import React, { RefObject } from 'react';
 import creditCardType from 'credit-card-type';
 import classNames from 'classnames';
 import { formatCardNumber } from './helpers/FormatCardNumber/FormatCardNumber';
 import { dateFormat } from './helpers/DateFormat/DateFormat';
+import { dateValidator } from './helpers/DateValidator/DateValidator';
+import { VALIDATION, CARD } from './constants/const';
+import { IProps, IState } from './AppTypes';
 
 import styles from './App.module.css';
-
-interface IProps {}
-
-interface IState {
-  cardNumber: CardNumber;
-  code: Code;
-  cardType: string;
-  expirationDate: string;
-  validationMessage: string;
-}
-
-type CardNumber = {
-  value: string;
-  maxLength: number;
-  minLength: number;
-};
-
-type Code = {
-  value: string;
-  name: string;
-  size: number;
-};
 
 export class App extends React.Component<IProps, IState> {
   private INPUTS_COUNT = 3 as number;
@@ -39,7 +20,7 @@ export class App extends React.Component<IProps, IState> {
 
   private initialCode = {
     value: '',
-    name: 'CVS',
+    name: CARD.CODE_CVS,
     size: 3,
   };
 
@@ -54,11 +35,7 @@ export class App extends React.Component<IProps, IState> {
       validationMessage: '',
     };
 
-    this.myRefs = {
-      1: React.createRef(),
-      2: React.createRef(),
-      3: React.createRef(),
-    } as any;
+    this.myRefs = [React.createRef(), React.createRef(), React.createRef()] as Array<RefObject<HTMLInputElement>>;
   }
 
   onChangeCardNumber = (event: React.ChangeEvent<HTMLInputElement>): void => {
@@ -93,7 +70,7 @@ export class App extends React.Component<IProps, IState> {
       );
     } catch (e) {
       this.setState({
-        validationMessage: 'Incorrect card number',
+        validationMessage: VALIDATION.INCORRECT_CARD_NUMBER,
         code: this.initialCode,
         cardType: '',
       });
@@ -103,9 +80,10 @@ export class App extends React.Component<IProps, IState> {
   onChangeExpireDate = (event: React.ChangeEvent<HTMLInputElement>): void => {
     const { maxLength, value, tabIndex } = event.target;
 
-    this.handleExpireDateValidation(value);
     this.setState({
       expirationDate: dateFormat(value),
+      // TODO set validation message properlly according to the current value
+      validationMessage: !Number.isInteger(value) ? VALIDATION.DATE_AS_NUMBER : dateValidator(value),
     });
 
     this.handleAutoTab(value.length === maxLength, tabIndex);
@@ -123,46 +101,37 @@ export class App extends React.Component<IProps, IState> {
     this.handleAutoTab(value.length === maxLength, tabIndex);
   };
 
-  handleExpireDateValidation = (date: string): void => {
-    const month = parseInt(date.slice(0, 2));
-    if (month < 0 || month > 12) {
-      this.setState({
-        validationMessage: 'Incorrect card date',
-      });
-    }
-  };
-
   handleAutoTab = (shouldAutoTab: boolean, tabIndex: number): void => {
-    if (this.myRefs[tabIndex + 1] && shouldAutoTab && tabIndex < this.INPUTS_COUNT) {
-      this.myRefs[tabIndex + 1].current.focus();
+    if (this.myRefs[tabIndex] && shouldAutoTab && tabIndex < this.INPUTS_COUNT) {
+      this.myRefs[tabIndex]?.current?.focus();
     }
   };
 
   render(): JSX.Element {
     return (
-      <React.Fragment>
+      <div className={styles.container}>
         <div className={styles.form}>
-          <div className={classNames(styles[`form-card-type__${this.state.cardType}`], styles['form-card-type'])}></div>
+          <div className={classNames(styles[`form-card-type__${this.state.cardType}`], styles['form-card-type'])} />
           <input
             minLength={this.state.cardNumber.minLength}
             maxLength={this.state.cardNumber.maxLength}
-            onChange={this.onChangeCardNumber} //TODO change from onChange to keyPress event
+            onChange={this.onChangeCardNumber}
             value={this.state.cardNumber.value}
             className={classNames(styles['form-card-number'], 'form-input-1', 'form-field')}
             tabIndex={1}
             autoComplete="off"
             placeholder="CardNumber"
-            ref={this.myRefs[1]}
+            ref={this.myRefs[0]}
           />
           <input
-            onChange={this.onChangeExpireDate} //TODO change from onChange to keyPress event
+            onChange={this.onChangeExpireDate}
             type="text"
             className={classNames(styles['form-card-expire-date'], 'form-input-2', 'form-field')}
             tabIndex={2}
             value={this.state.expirationDate}
             maxLength={5}
             placeholder="MM/YY"
-            ref={this.myRefs[2]}
+            ref={this.myRefs[1]}
           />
           <input
             onChange={this.onChangeCode}
@@ -172,11 +141,11 @@ export class App extends React.Component<IProps, IState> {
             tabIndex={3}
             value={this.state.code.value}
             placeholder={this.state.code.name}
-            ref={this.myRefs[3]}
+            ref={this.myRefs[2]}
           />
         </div>
         {this.state.validationMessage && <div className={styles.validation}>{this.state.validationMessage}</div>}
-      </React.Fragment>
+      </div>
     );
   }
 }
