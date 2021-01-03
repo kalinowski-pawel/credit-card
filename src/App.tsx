@@ -130,6 +130,7 @@ export class App extends React.Component<IProps, IState> {
             tabIndex={2}
             value={this.state.expirationDate}
             maxLength={5}
+            autoComplete="off"
             placeholder="MM/YY"
             ref={this.myRefs[1]}
           />
@@ -138,6 +139,7 @@ export class App extends React.Component<IProps, IState> {
             type="text"
             className={classNames(styles['form-card-code'], 'form-input-3', 'form-field')}
             maxLength={this.state.code.size}
+            autoComplete="off"
             tabIndex={3}
             value={this.state.code.value}
             placeholder={this.state.code.name}
