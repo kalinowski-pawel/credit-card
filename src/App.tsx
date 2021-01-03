@@ -82,8 +82,7 @@ export class App extends React.Component<IProps, IState> {
 
     this.setState({
       expirationDate: dateFormat(value),
-      // TODO set validation message properlly according to the current value
-      validationMessage: !Number.isInteger(value) ? VALIDATION.DATE_AS_NUMBER : dateValidator(value),
+      validationMessage: dateValidator(value),
     });
 
     this.handleAutoTab(value.length === maxLength, tabIndex);

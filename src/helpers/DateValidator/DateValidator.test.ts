@@ -14,4 +14,15 @@ describe('test cases for expiration date helper', () => {
     expect(dateValidator('34/')).toEqual(VALIDATION.INCORRECT_DATE);
     expect(dateValidator('00/')).toEqual(VALIDATION.INCORRECT_DATE);
   });
+  it('should return empty string when value is empty', () => {
+    expect(dateValidator('')).toEqual('');
+  });
+
+  it('should return empty string when date is a number', () => {
+    expect(dateValidator('12')).toEqual('');
+  });
+
+  it('should return validation message when date is a text', () => {
+    expect(dateValidator('aa')).toEqual(VALIDATION.DATE_AS_NUMBER);
+  });
 });
